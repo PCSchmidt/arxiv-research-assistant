@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Research Assistant</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <h1>Search Results for "{{ query }}"</h1>
+    {% if results %}
+        <ul>
+        {% for result in results %}
+            <li>
+                <h2><a href="{% url 'paper_summary' paper_id=result.link|cut:'http://arxiv.org/abs/'|cut:'http://arxiv.org/pdf/'|cut:'.pdf' %}?query={{ query }}">{{ result.title }}</a></h2>
+                <p>{{ result.summary|truncatewords:50 }}</p>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No results found.</p>
+    {% endif %}
+    <a href="{% url 'index' %}">Back to Search</a>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

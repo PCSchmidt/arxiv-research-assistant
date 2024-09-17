@@ -1,0 +1,1 @@
+console.log("Research Assistant app is running!");

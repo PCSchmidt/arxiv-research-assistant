@@ -1,0 +1,32 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ paper.title }} - Summary</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body data-paper-id="{{ paper.arxiv_id }}">
+    <h1>{{ paper.title }}</h1>
+    <h2>Summary</h2>
+    <p>{{ paper.summary }}</p>
+    
+    <h2>Actions</h2>
+    <ul>
+        <li><a href="{% url 'pdf_viewer' paper.arxiv_id %}" target="_blank">View PDF</a></li>
+        <li><a href="{% url 'generate_wordcloud' paper.arxiv_id %}" target="_blank">View Word Cloud</a></li>
+        <li><a href="{% url 'generate_knowledge_graph' paper.arxiv_id %}" target="_blank">View Knowledge Graph</a></li>
+    </ul>
+    
+    <h2>Chat</h2>
+    <div id="chat-container">
+        <div id="chat-messages"></div>
+        <input type="text" id="user-input" placeholder="Ask a question about the paper...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+    
+    <a href="{% url 'search_results' %}?query={{ query }}">Back to Search Results</a>
+    <script src="{% static 'js/main.js' %}"></script>
+</body>
+</html>

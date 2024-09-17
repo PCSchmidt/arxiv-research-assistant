@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Viewer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
+    <style>
+        #pdf-viewer {
+            width: 100%;
+            height: 800px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>{{ paper.title }}</h1>
+    <div id="pdf-viewer"></div>
+
+    <script>
+        // URL of the PDF file
+        var url = '{{ pdf_url }}';
+
+        // Load the PDF document
+        pdfjsLib.getDocument(url).promise.then(function(pdf) {
+            // Get the first page
+            pdf.getPage(1).then(function(page) {
+                var scale = 1.5;
+                var viewport = page.getViewport({scale: scale});
+
+                // Create a canvas element to render the page
+                var canvas = document.createElement('canvas');
+                var context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                // Append the canvas to the viewer div
+                var viewer = document.getElementById('pdf-viewer');
+                viewer.appendChild(canvas);
+
+                // Render the page on the canvas
+                var renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                page.render(renderContext);
+            });
+        });
+    </script>
+</body>
+</html>
