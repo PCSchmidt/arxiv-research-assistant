@@ -138,13 +138,24 @@ def generate_knowledge_graph(request, paper_id):
                 G.add_edge(token.head.text, token.text)
     
     # Create a plot
-    plt.figure(figsize=(12, 8))
-    pos = nx.spring_layout(G)
-    nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=1500, font_size=8, font_weight='bold')
+    plt.figure(figsize=(16, 10))
+    pos = nx.spring_layout(G, k=0.5, iterations=50)
+    
+    # Draw nodes
+    nx.draw_networkx_nodes(G, pos, node_color='lightblue', node_size=3000, alpha=0.8)
+    
+    # Draw edges
+    nx.draw_networkx_edges(G, pos, edge_color='gray', width=1, alpha=0.5)
+    
+    # Draw labels
+    nx.draw_networkx_labels(G, pos, font_size=8, font_weight='bold')
+    
+    # Remove axis
+    plt.axis('off')
     
     # Save the plot to a buffer
     buffer = io.BytesIO()
-    plt.savefig(buffer, format='png')
+    plt.savefig(buffer, format='png', dpi=300, bbox_inches='tight')
     buffer.seek(0)
     
     # Encode the image to base64

@@ -1,21 +1,33 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Viewer</title>
+    <title>PDF Viewer - {{ paper.title }}</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.9.359/pdf.min.js"></script>
     <style>
         #pdf-viewer {
             width: 100%;
             height: 800px;
             border: 1px solid #ccc;
+            overflow: auto;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <h1>{{ paper.title }}</h1>
     <div id="pdf-viewer"></div>
+    <a href="{% url 'paper_summary' paper.arxiv_id %}" class="button">Back to Paper Summary</a>
 
     <script>
         // URL of the PDF file
@@ -23,28 +35,36 @@
 
         // Load the PDF document
         pdfjsLib.getDocument(url).promise.then(function(pdf) {
-            // Get the first page
-            pdf.getPage(1).then(function(page) {
-                var scale = 1.5;
-                var viewport = page.getViewport({scale: scale});
+            var viewer = document.getElementById('pdf-viewer');
+            
+            // Function to render a page
+            function renderPage(pageNumber) {
+                pdf.getPage(pageNumber).then(function(page) {
+                    var scale = 1.5;
+                    var viewport = page.getViewport({scale: scale});
 
-                // Create a canvas element to render the page
-                var canvas = document.createElement('canvas');
-                var context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                    var canvas = document.createElement('canvas');
+                    var context = canvas.getContext('2d');
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
-                // Append the canvas to the viewer div
-                var viewer = document.getElementById('pdf-viewer');
-                viewer.appendChild(canvas);
+                    viewer.appendChild(canvas);
 
-                // Render the page on the canvas
-                var renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                page.render(renderContext);
-            });
+                    var renderContext = {
+                        canvasContext: context,
+                        viewport: viewport
+                    };
+                    page.render(renderContext);
+                });
+            }
+
+            // Render all pages
+            for(var i = 1; i <= pdf.numPages; i++) {
+                renderPage(i);
+            }
+        }).catch(function(error) {
+            console.error('Error loading PDF:', error);
+            document.getElementById('pdf-viewer').textContent = 'Error loading PDF. Please try again later.';
         });
     </script>
 </body>
